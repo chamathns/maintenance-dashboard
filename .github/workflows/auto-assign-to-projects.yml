@@ -1,0 +1,40 @@
+name: Add IAM issues to Internal projects
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-to-project:
+    name: Add issue to project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for Type/Patch label
+        id: check_label
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const labels = issue.data.labels.map(label => label.name);
+            const hasTypePatch = labels.includes('Type/Patch');
+            core.setOutput('hasTypePatch', hasTypePatch);
+
+      - name: Add issue to IAM patches
+        if: steps.check_label.outputs.hasTypePatch == 'true'
+        uses: actions/add-to-project@main
+        with:
+          project-url: https://github.com/users/chamathns/projects/1
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add issue to IAM Internals
+        if: steps.check_label.outputs.hasTypePatch == 'false'
+        uses: actions/add-to-project@main
+        with:
+          project-url: https://github.com/users/chamathns/projects/2
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          
