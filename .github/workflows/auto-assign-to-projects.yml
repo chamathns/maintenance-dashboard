@@ -13,7 +13,7 @@ jobs:
         id: check_label
         uses: actions/github-script@v5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.MY_PAT }}
           script: |
             const issue = await github.rest.issues.get({
               owner: context.repo.owner,
@@ -29,12 +29,12 @@ jobs:
         uses: actions/add-to-project@main
         with:
           project-url: https://github.com/users/chamathns/projects/1
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.MY_PAT }}
 
       - name: Add issue to IAM Internals
         if: steps.check_label.outputs.hasTypePatch == 'false'
         uses: actions/add-to-project@main
         with:
           project-url: https://github.com/users/chamathns/projects/2
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.MY_PAT }}
           
